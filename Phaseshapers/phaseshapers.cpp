@@ -93,40 +93,25 @@ namespace PhaseShapers
 {
 float Oscillator::Process()
 {
-    float out = 0.f;
-    switch (m_waveform)
-    {
-    case Waveform::WAVESLICE:
-        out = ProcessWaveSlice();
-        break;
-    case Waveform::HARDSYNC:
-        out = ProcessHardSync();
-        break;
-    case Waveform::SOFTSYNC:
-        out = ProcessSoftSync();
-        break;
-    case Waveform::TRIANGLE_MOD:
-        out = ProcessTriMod();
-        break;
-    case Waveform::SUPERSAW:
-        out = ProcessSupersaw();
-        break;
-    case Waveform::VARIABLE_SLOPE:
-        out = ProcessVarSlope();
-        break;
-    default:
-        break;
-    }
+    float wave1 = std::floor(m_waveform);
+    float out1 = ProcessWave(static_cast<Waveform>(wave1));
+
+    float wave2 = std::ceil(m_waveform);
+    float out2 = ProcessWave(static_cast<Waveform>(wave2));
+
+    float w1 = 1 - (m_waveform - wave1);
+    float w2 = 1 - w1;
 
     m_phase += m_phaseIncrement;
     m_phase = fmodf(m_phase, 1.f);
 
-    return out;
+    return out1 * w1 + out2 * w2;
 }
 
 float Oscillator::ProcessWaveSlice()
 {
-    float slicePhase = g_lin(m_phase, 0.25f);
+    float a1 = 0.25f + (1 + m_mod) * 0.10;
+    float slicePhase = g_lin(m_phase, a1);
     float trivial = G_B(std::sin(TWOPI_F * slicePhase));
 
     float blep = polyBLEP(m_phase, m_phaseIncrement, -2);
@@ -135,25 +120,28 @@ float Oscillator::ProcessWaveSlice()
 
 float Oscillator::ProcessHardSync()
 {
-    return G_B(g_ramp(m_phase, 2.5f));
+    float a1 = 2.5f + m_mod;
+    return G_B(g_ramp(m_phase, a1));
 }
 
 float Oscillator::ProcessSoftSync()
 {
-    float softPhase = g_tri(m_phase, 1.25f);
+    float a1 = 1.25f + m_mod;
+    float softPhase = g_tri(m_phase, a1);
     return G_B(s_tri(softPhase));
 }
 
 float Oscillator::ProcessTriMod()
 {
     const float atm = 0.82f; // Roland JP-8000 triangle modulation offset parameter
-    float trimodPhase = atm * G_B(g_tri(m_phase));
+    float mod = atm + m_mod * 0.15;
+    float trimodPhase = mod * G_B(g_tri(m_phase));
     return 2 * (trimodPhase - std::ceil(trimodPhase - 0.5f));
 }
 
 float Oscillator::ProcessSupersaw()
 {
-    const float m1 = 0.5f + m_lfo.Process();
+    const float m1 = 0.5f + (m_mod * 0.25f);
     const float m2 = 0.88f;
     const float a1 = 1.5f;
     float xs = g_lin(m_phase, a1);
@@ -164,7 +152,7 @@ float Oscillator::ProcessSupersaw()
 
 float Oscillator::ProcessVarSlope()
 {
-    const float width = 0.5f;
+    float width = 0.5f + m_mod * 0.25f;
 
     float pulse = g_pulse(m_phase, m_phaseIncrement, width, m_period);
     float vslope = 0.5f * m_phase * (1.0f - pulse) / width + pulse * (m_phase - width) / (1 - width);

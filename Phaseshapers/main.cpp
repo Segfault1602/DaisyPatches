@@ -12,7 +12,7 @@ CpuLoadMeter cpuLoadMeter;
 char m_cpuLoadStr[16] = {0};
 
 PhaseShapers::Oscillator m_osc;
-Parameter m_freqCtrl, m_fineCtrl, m_waveCtrl;
+Parameter m_freqCtrl, m_fineCtrl, m_waveCtrl, m_modCtrl;
 
 void UpdateOled();
 
@@ -24,8 +24,10 @@ void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, s
     float freq = mtof(m_freqCtrl.Process() + m_fineCtrl.Process());
     m_osc.SetFreq(freq);
 
-    float wave = std::floor(m_waveCtrl.Process());
-    m_osc.SetWaveform(static_cast<PhaseShapers::Waveform>(wave));
+    m_osc.SetWaveform(m_waveCtrl.Process());
+
+    float mod = m_modCtrl.Process();
+    m_osc.SetMod(mod);
 
     for (size_t i = 0; i < size; i++)
     {
@@ -47,12 +49,13 @@ int main(void)
     cpuLoadMeter.Init(m_patch.AudioSampleRate(), m_patch.AudioBlockSize());
 
     m_osc.Init(m_patch.AudioSampleRate());
-    m_osc.SetWaveform(PhaseShapers::Waveform::WAVESLICE);
+    m_osc.SetWaveform(0.f);
 
     m_freqCtrl.Init(m_patch.controls[m_patch.CTRL_1], 10.0, 110.0f, Parameter::LINEAR);
     m_fineCtrl.Init(m_patch.controls[m_patch.CTRL_2], 0.f, 7.f, Parameter::LINEAR);
-    m_waveCtrl.Init(m_patch.controls[m_patch.CTRL_3], 0.0, static_cast<uint8_t>(PhaseShapers::Waveform::NUM_WAVES),
+    m_waveCtrl.Init(m_patch.controls[m_patch.CTRL_3], 0.0, static_cast<uint8_t>(PhaseShapers::Waveform::NUM_WAVES)-1,
                     Parameter::LINEAR);
+    m_modCtrl.Init(m_patch.controls[m_patch.CTRL_4], -1.f, 1.f, Parameter::LINEAR);
 
     m_patch.StartAdc();
     m_patch.StartAudio(AudioCallback);

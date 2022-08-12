@@ -17,12 +17,12 @@ namespace PhaseShapers
 
 enum class Waveform : uint8_t
 {
-    WAVESLICE = 0,
-    HARDSYNC,
+    VARIABLE_SLOPE = 0,
     SOFTSYNC,
-    TRIANGLE_MOD,
+    WAVESLICE,
     SUPERSAW,
-    VARIABLE_SLOPE,
+    HARDSYNC,
+    TRIANGLE_MOD,
     NUM_WAVES,
 };
 
@@ -39,22 +39,23 @@ class Oscillator
         m_freq = 220.f;
         m_phaseIncrement = m_freq / m_sampleRate;
         m_period = m_sampleRate / m_freq;
-
-        m_lfo.Init(sampleRate);
-        m_lfo.SetFreq(1.f);
-        m_lfo.SetAmp(0.25f);
     }
 
-    void SetWaveform(const Waveform wave)
+    void SetWaveform(float wave)
     {
         m_waveform = wave;
     }
 
-    void SetFreq(const float freq)
+    void SetFreq(float freq)
     {
         m_freq = freq;
         m_phaseIncrement = m_freq / m_sampleRate;
         m_period = m_sampleRate / m_freq;
+    }
+
+    void SetMod(float mod)
+    {
+        m_mod = mod;
     }
 
     float Process();
@@ -68,14 +69,43 @@ class Oscillator
     float ProcessVarSlope();
     float ProcessVarTri();
 
+    inline float ProcessWave(Waveform wave)
+    {
+        float out = 0.f;
+        switch (wave)
+        {
+        case Waveform::VARIABLE_SLOPE:
+            out = ProcessVarSlope();
+            break;
+        case Waveform::SOFTSYNC:
+            out = ProcessSoftSync();
+            break;
+        case Waveform::WAVESLICE:
+            out = ProcessWaveSlice();
+            break;
+        case Waveform::SUPERSAW:
+            out = ProcessSupersaw();
+            break;
+        case Waveform::HARDSYNC:
+            out = ProcessHardSync();
+            break;
+        case Waveform::TRIANGLE_MOD:
+            out = ProcessTriMod();
+            break;
+        default:
+            break;
+        }
+        return out;
+    }
+
   private:
     float m_sampleRate = 0.f;
     float m_freq = 220.f;
     float m_phaseIncrement = 0.f;
     float m_phase = 0.f;
     float m_period = 0.f;
-    Waveform m_waveform = Waveform::WAVESLICE;
+    float m_waveform = static_cast<float>(Waveform::WAVESLICE);
 
-    daisysp::Oscillator m_lfo;
+    float m_mod = 0.f;
 };
 } // namespace PhaseShapers
