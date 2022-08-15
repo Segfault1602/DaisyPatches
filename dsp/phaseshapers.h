@@ -10,7 +10,7 @@
 // Alex St-Onge
 // =============================================================================
 
-#include "daisysp.h"
+#include <stdint.h>
 
 namespace PhaseShapers
 {

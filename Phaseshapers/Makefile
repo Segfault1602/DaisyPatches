@@ -2,10 +2,14 @@
 TARGET = PhaseShapers
 
 # Sources
-CPP_SOURCES = main.cpp \
-	phaseshapers.cpp \
+CPP_SOURCES = main.cpp
 
-DEBUG = 1
+# DEBUG = 1
+
+LIBS += -lmarguerite
+LIBDIR += -L ../dsp/build
+
+C_INCLUDES += -I../dsp
 
 # Library Locations
 LIBDAISY_DIR = ../externals/libDaisy/
