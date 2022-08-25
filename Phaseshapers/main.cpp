@@ -11,7 +11,7 @@ DaisyPatch m_patch;
 CpuLoadMeter cpuLoadMeter;
 char m_cpuLoadStr[16] = {0};
 
-PhaseShapers::Oscillator m_osc;
+marguerite::Phaseshaper m_osc;
 Parameter m_freqCtrl, m_fineCtrl, m_waveCtrl, m_modCtrl;
 
 void UpdateOled();
@@ -53,7 +53,7 @@ int main(void)
 
     m_freqCtrl.Init(m_patch.controls[m_patch.CTRL_1], 10.0, 110.0f, Parameter::LINEAR);
     m_fineCtrl.Init(m_patch.controls[m_patch.CTRL_2], 0.f, 7.f, Parameter::LINEAR);
-    m_waveCtrl.Init(m_patch.controls[m_patch.CTRL_3], 0.0, static_cast<uint8_t>(PhaseShapers::Waveform::NUM_WAVES)-1,
+    m_waveCtrl.Init(m_patch.controls[m_patch.CTRL_3], 0.0, static_cast<uint8_t>(marguerite::Phaseshaper::Waveform::NUM_WAVES)-1,
                     Parameter::LINEAR);
     m_modCtrl.Init(m_patch.controls[m_patch.CTRL_4], -1.f, 1.f, Parameter::LINEAR);
 

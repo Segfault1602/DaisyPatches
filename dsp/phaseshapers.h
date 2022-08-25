@@ -12,25 +12,25 @@
 
 #include <stdint.h>
 
-namespace PhaseShapers
+namespace marguerite
 {
 
-enum class Waveform : uint8_t
-{
-    VARIABLE_SLOPE = 0,
-    SOFTSYNC,
-    WAVESLICE,
-    SUPERSAW,
-    HARDSYNC,
-    TRIANGLE_MOD,
-    NUM_WAVES,
-};
-
-class Oscillator
+class Phaseshaper
 {
   public:
-    Oscillator() = default;
-    ~Oscillator() = default;
+    enum class Waveform : uint8_t
+    {
+        VARIABLE_SLOPE = 0,
+        SOFTSYNC,
+        WAVESLICE,
+        SUPERSAW,
+        HARDSYNC,
+        TRIANGLE_MOD,
+        NUM_WAVES,
+    };
+
+    Phaseshaper() = default;
+    ~Phaseshaper() = default;
 
     void Init(float sampleRate)
     {
@@ -108,4 +108,4 @@ class Oscillator
 
     float m_mod = 0.f;
 };
-} // namespace PhaseShapers
+} // namespace marguerite
