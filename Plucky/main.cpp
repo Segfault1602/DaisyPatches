@@ -2,7 +2,7 @@
 #include "daisysp.h"
 #include "util/CpuLoadMeter.h"
 
-#include "phaseshapers.h"
+#include "Waveguide.h"
 
 using namespace daisy;
 using namespace daisysp;
@@ -11,8 +11,18 @@ DaisyPatch m_patch;
 CpuLoadMeter cpuLoadMeter;
 char m_cpuLoadStr[16] = {0};
 
-marguerite::Phaseshaper m_osc;
-Parameter m_freqCtrl, m_fineCtrl, m_waveCtrl, m_modCtrl;
+Tone m_lp;
+
+Parameter m_delayLengthCtrl, m_pluckLocationCtrl, m_pickupLocationCtrl;
+
+float m_delayLength = 40;
+float m_pluckLength = m_delayLength / 2.f;
+float m_pluckLocation = m_delayLength / 2.f;
+float m_pickupLocation = m_delayLength / 2.f;
+
+constexpr size_t MAX_DELAY = 1024;
+
+marguerite::Waveguide<MAX_DELAY> m_waveguide;
 
 void UpdateOled();
 
@@ -21,17 +31,23 @@ void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, s
     cpuLoadMeter.OnBlockStart();
 
     m_patch.ProcessAllControls();
-    float freq = mtof(m_freqCtrl.Process() + m_fineCtrl.Process());
-    m_osc.SetFreq(freq);
 
-    m_osc.SetWaveform(m_waveCtrl.Process());
+    float noteFreq = mtof(std::floor(m_delayLengthCtrl.Process()));
+    m_delayLength = m_patch.AudioSampleRate() / noteFreq / 2.f;
+    m_waveguide.SetDelay(m_delayLength);
+    m_pluckLocation = m_pluckLocationCtrl.Process();
+    m_pickupLocation = m_pickupLocationCtrl.Process();
 
-    float mod = m_modCtrl.Process();
-    m_osc.SetMod(mod);
-
+    const float threshold = 0.1f;
+    float actualPluckLocation = (m_pluckLocation * m_delayLength);
     for (size_t i = 0; i < size; i++)
     {
-        out[0][i] = m_osc.Process();
+        if (in[0][i] > threshold)
+        {
+            m_waveguide.AddIn(in[0][i] * 0.5f, actualPluckLocation);
+        }
+
+        out[0][i] = m_waveguide.Process();
         out[1][i] = in[1][i];
         out[2][i] = in[2][i];
         out[3][i] = in[3][i];
@@ -48,14 +64,12 @@ int main(void)
 
     cpuLoadMeter.Init(m_patch.AudioSampleRate(), m_patch.AudioBlockSize());
 
-    m_osc.Init(m_patch.AudioSampleRate());
-    m_osc.SetWaveform(0.f);
+    m_delayLengthCtrl.Init(m_patch.controls[m_patch.CTRL_1], 10.0, 110.0f, Parameter::LINEAR);
+    m_pluckLocationCtrl.Init(m_patch.controls[m_patch.CTRL_2], 0.f, 1.f, Parameter::LINEAR);
+    m_pickupLocationCtrl.Init(m_patch.controls[m_patch.CTRL_3], 0.0f, 1.f, Parameter::LINEAR);
 
-    m_freqCtrl.Init(m_patch.controls[m_patch.CTRL_1], 10.0, 110.0f, Parameter::LINEAR);
-    m_fineCtrl.Init(m_patch.controls[m_patch.CTRL_2], 0.f, 7.f, Parameter::LINEAR);
-    m_waveCtrl.Init(m_patch.controls[m_patch.CTRL_3], 0.0, static_cast<uint8_t>(marguerite::Phaseshaper::Waveform::NUM_WAVES)-1,
-                    Parameter::LINEAR);
-    m_modCtrl.Init(m_patch.controls[m_patch.CTRL_4], -1.f, 1.f, Parameter::LINEAR);
+    m_lp.Init(m_patch.AudioSampleRate());
+    m_lp.SetFreq(100);
 
     m_patch.StartAdc();
     m_patch.StartAudio(AudioCallback);

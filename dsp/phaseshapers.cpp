@@ -86,12 +86,10 @@ float polyBLEP(float phase, float phaseIncrement, float h = -1.f)
     return out;
 }
 
-// -- Phase-shifted differences
-
-// Oscillator algorithm
-namespace PhaseShapers
+namespace marguerite
 {
-float Oscillator::Process()
+
+float Phaseshaper::Process()
 {
     float wave1 = std::floor(m_waveform);
     float out1 = ProcessWave(static_cast<Waveform>(wave1));
@@ -108,7 +106,7 @@ float Oscillator::Process()
     return out1 * w1 + out2 * w2;
 }
 
-float Oscillator::ProcessWaveSlice()
+float Phaseshaper::ProcessWaveSlice()
 {
     float a1 = 0.25f + (1 + m_mod) * 0.10;
     float slicePhase = g_lin(m_phase, a1);
@@ -118,20 +116,20 @@ float Oscillator::ProcessWaveSlice()
     return trivial + blep;
 }
 
-float Oscillator::ProcessHardSync()
+float Phaseshaper::ProcessHardSync()
 {
     float a1 = 2.5f + m_mod;
     return G_B(g_ramp(m_phase, a1));
 }
 
-float Oscillator::ProcessSoftSync()
+float Phaseshaper::ProcessSoftSync()
 {
     float a1 = 1.25f + m_mod;
     float softPhase = g_tri(m_phase, a1);
     return G_B(s_tri(softPhase));
 }
 
-float Oscillator::ProcessTriMod()
+float Phaseshaper::ProcessTriMod()
 {
     const float atm = 0.82f; // Roland JP-8000 triangle modulation offset parameter
     float mod = atm + m_mod * 0.15;
@@ -139,7 +137,7 @@ float Oscillator::ProcessTriMod()
     return 2 * (trimodPhase - std::ceil(trimodPhase - 0.5f));
 }
 
-float Oscillator::ProcessSupersaw()
+float Phaseshaper::ProcessSupersaw()
 {
     const float m1 = 0.5f + (m_mod * 0.25f);
     const float m2 = 0.88f;
@@ -150,7 +148,7 @@ float Oscillator::ProcessSupersaw()
     return G_B(std::sin(supersawPhase));
 }
 
-float Oscillator::ProcessVarSlope()
+float Phaseshaper::ProcessVarSlope()
 {
     float width = 0.5f + m_mod * 0.25f;
 
