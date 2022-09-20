@@ -37,21 +37,6 @@ void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, s
     m_waveguide.SetDelay(m_delayLength);
     m_pluckLocation = m_pluckLocationCtrl.Process();
     m_pickupLocation = m_pickupLocationCtrl.Process();
-    // if (m_patch.gate_input[0].Trig())
-    // {
-    //     m_waveguide.Reset();
-    //     m_waveguide.SetDelay(m_delayLength);
-    //     m_waveguide.SetPickup(m_pickupLocation * m_delayLength);
-
-    //     float actualPluckLocation = (m_pluckLocation*m_delayLength);
-    //     // m_waveguide.Pluck(actualPluckLocation);
-    //     daisysp::WhiteNoise noise;
-    //     noise.Init();
-    //     for (size_t i = actualPluckLocation - 20; i < actualPluckLocation + 20; ++i)
-    //     {
-    //         m_waveguide.TapIn(m_lp.Process(noise.Process()), i);
-    //     }
-    // }
 
     const float threshold = 0.1f;
     float actualPluckLocation = (m_pluckLocation * m_delayLength);
