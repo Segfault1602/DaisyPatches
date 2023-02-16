@@ -9,7 +9,7 @@
 // Adapted from python by:
 // Alex St-Onge
 // =============================================================================
-
+#pragma once
 #include <stdint.h>
 
 namespace marguerite
