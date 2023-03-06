@@ -57,10 +57,10 @@ RM = /Applications/CMake.app/Contents/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/alex/Documents/DaisyPatches
+CMAKE_SOURCE_DIR = /Users/alex/src/DaisyPatches
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/alex/Documents/DaisyPatches
+CMAKE_BINARY_DIR = /Users/alex/src/DaisyPatches
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -132,14 +132,14 @@ install/strip/fast: preinstall/fast
 
 # The main all target
 all: cmake_check_build_system
-	cd /Users/alex/Documents/DaisyPatches && $(CMAKE_COMMAND) -E cmake_progress_start /Users/alex/Documents/DaisyPatches/CMakeFiles /Users/alex/Documents/DaisyPatches/dsp//CMakeFiles/progress.marks
-	cd /Users/alex/Documents/DaisyPatches && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 dsp/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/alex/Documents/DaisyPatches/CMakeFiles 0
+	cd /Users/alex/src/DaisyPatches && $(CMAKE_COMMAND) -E cmake_progress_start /Users/alex/src/DaisyPatches/CMakeFiles /Users/alex/src/DaisyPatches/dsp//CMakeFiles/progress.marks
+	cd /Users/alex/src/DaisyPatches && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 dsp/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/alex/src/DaisyPatches/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /Users/alex/Documents/DaisyPatches && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 dsp/clean
+	cd /Users/alex/src/DaisyPatches && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 dsp/clean
 .PHONY : clean
 
 # The main clean target
@@ -148,22 +148,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /Users/alex/Documents/DaisyPatches && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 dsp/preinstall
+	cd /Users/alex/src/DaisyPatches && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 dsp/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /Users/alex/Documents/DaisyPatches && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 dsp/preinstall
+	cd /Users/alex/src/DaisyPatches && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 dsp/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /Users/alex/Documents/DaisyPatches && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /Users/alex/src/DaisyPatches && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 dsp/CMakeFiles/MargueriteDSP.dir/rule:
-	cd /Users/alex/Documents/DaisyPatches && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 dsp/CMakeFiles/MargueriteDSP.dir/rule
+	cd /Users/alex/src/DaisyPatches && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 dsp/CMakeFiles/MargueriteDSP.dir/rule
 .PHONY : dsp/CMakeFiles/MargueriteDSP.dir/rule
 
 # Convenience name for target.
@@ -172,7 +172,7 @@ MargueriteDSP: dsp/CMakeFiles/MargueriteDSP.dir/rule
 
 # fast build rule for target.
 MargueriteDSP/fast:
-	cd /Users/alex/Documents/DaisyPatches && $(MAKE) $(MAKESILENT) -f dsp/CMakeFiles/MargueriteDSP.dir/build.make dsp/CMakeFiles/MargueriteDSP.dir/build
+	cd /Users/alex/src/DaisyPatches && $(MAKE) $(MAKESILENT) -f dsp/CMakeFiles/MargueriteDSP.dir/build.make dsp/CMakeFiles/MargueriteDSP.dir/build
 .PHONY : MargueriteDSP/fast
 
 phaseshapers.o: phaseshapers.cpp.o
@@ -180,7 +180,7 @@ phaseshapers.o: phaseshapers.cpp.o
 
 # target to build an object file
 phaseshapers.cpp.o:
-	cd /Users/alex/Documents/DaisyPatches && $(MAKE) $(MAKESILENT) -f dsp/CMakeFiles/MargueriteDSP.dir/build.make dsp/CMakeFiles/MargueriteDSP.dir/phaseshapers.cpp.o
+	cd /Users/alex/src/DaisyPatches && $(MAKE) $(MAKESILENT) -f dsp/CMakeFiles/MargueriteDSP.dir/build.make dsp/CMakeFiles/MargueriteDSP.dir/phaseshapers.cpp.o
 .PHONY : phaseshapers.cpp.o
 
 phaseshapers.i: phaseshapers.cpp.i
@@ -188,7 +188,7 @@ phaseshapers.i: phaseshapers.cpp.i
 
 # target to preprocess a source file
 phaseshapers.cpp.i:
-	cd /Users/alex/Documents/DaisyPatches && $(MAKE) $(MAKESILENT) -f dsp/CMakeFiles/MargueriteDSP.dir/build.make dsp/CMakeFiles/MargueriteDSP.dir/phaseshapers.cpp.i
+	cd /Users/alex/src/DaisyPatches && $(MAKE) $(MAKESILENT) -f dsp/CMakeFiles/MargueriteDSP.dir/build.make dsp/CMakeFiles/MargueriteDSP.dir/phaseshapers.cpp.i
 .PHONY : phaseshapers.cpp.i
 
 phaseshapers.s: phaseshapers.cpp.s
@@ -196,32 +196,32 @@ phaseshapers.s: phaseshapers.cpp.s
 
 # target to generate assembly for a file
 phaseshapers.cpp.s:
-	cd /Users/alex/Documents/DaisyPatches && $(MAKE) $(MAKESILENT) -f dsp/CMakeFiles/MargueriteDSP.dir/build.make dsp/CMakeFiles/MargueriteDSP.dir/phaseshapers.cpp.s
+	cd /Users/alex/src/DaisyPatches && $(MAKE) $(MAKESILENT) -f dsp/CMakeFiles/MargueriteDSP.dir/build.make dsp/CMakeFiles/MargueriteDSP.dir/phaseshapers.cpp.s
 .PHONY : phaseshapers.cpp.s
 
-sinc_interpolator.o: sinc_interpolator.cpp.o
-.PHONY : sinc_interpolator.o
+sinc_resampler.o: sinc_resampler.cpp.o
+.PHONY : sinc_resampler.o
 
 # target to build an object file
-sinc_interpolator.cpp.o:
-	cd /Users/alex/Documents/DaisyPatches && $(MAKE) $(MAKESILENT) -f dsp/CMakeFiles/MargueriteDSP.dir/build.make dsp/CMakeFiles/MargueriteDSP.dir/sinc_interpolator.cpp.o
-.PHONY : sinc_interpolator.cpp.o
+sinc_resampler.cpp.o:
+	cd /Users/alex/src/DaisyPatches && $(MAKE) $(MAKESILENT) -f dsp/CMakeFiles/MargueriteDSP.dir/build.make dsp/CMakeFiles/MargueriteDSP.dir/sinc_resampler.cpp.o
+.PHONY : sinc_resampler.cpp.o
 
-sinc_interpolator.i: sinc_interpolator.cpp.i
-.PHONY : sinc_interpolator.i
+sinc_resampler.i: sinc_resampler.cpp.i
+.PHONY : sinc_resampler.i
 
 # target to preprocess a source file
-sinc_interpolator.cpp.i:
-	cd /Users/alex/Documents/DaisyPatches && $(MAKE) $(MAKESILENT) -f dsp/CMakeFiles/MargueriteDSP.dir/build.make dsp/CMakeFiles/MargueriteDSP.dir/sinc_interpolator.cpp.i
-.PHONY : sinc_interpolator.cpp.i
+sinc_resampler.cpp.i:
+	cd /Users/alex/src/DaisyPatches && $(MAKE) $(MAKESILENT) -f dsp/CMakeFiles/MargueriteDSP.dir/build.make dsp/CMakeFiles/MargueriteDSP.dir/sinc_resampler.cpp.i
+.PHONY : sinc_resampler.cpp.i
 
-sinc_interpolator.s: sinc_interpolator.cpp.s
-.PHONY : sinc_interpolator.s
+sinc_resampler.s: sinc_resampler.cpp.s
+.PHONY : sinc_resampler.s
 
 # target to generate assembly for a file
-sinc_interpolator.cpp.s:
-	cd /Users/alex/Documents/DaisyPatches && $(MAKE) $(MAKESILENT) -f dsp/CMakeFiles/MargueriteDSP.dir/build.make dsp/CMakeFiles/MargueriteDSP.dir/sinc_interpolator.cpp.s
-.PHONY : sinc_interpolator.cpp.s
+sinc_resampler.cpp.s:
+	cd /Users/alex/src/DaisyPatches && $(MAKE) $(MAKESILENT) -f dsp/CMakeFiles/MargueriteDSP.dir/build.make dsp/CMakeFiles/MargueriteDSP.dir/sinc_resampler.cpp.s
+.PHONY : sinc_resampler.cpp.s
 
 # Help Target
 help:
@@ -239,9 +239,9 @@ help:
 	@echo "... phaseshapers.o"
 	@echo "... phaseshapers.i"
 	@echo "... phaseshapers.s"
-	@echo "... sinc_interpolator.o"
-	@echo "... sinc_interpolator.i"
-	@echo "... sinc_interpolator.s"
+	@echo "... sinc_resampler.o"
+	@echo "... sinc_resampler.i"
+	@echo "... sinc_resampler.s"
 .PHONY : help
 
 
@@ -253,6 +253,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /Users/alex/Documents/DaisyPatches && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /Users/alex/src/DaisyPatches && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

@@ -1,6 +1,6 @@
 add_library(MargueriteDSP STATIC
 phaseshapers.cpp
-sinc_interpolator.cpp
+sinc_resampler.cpp
 )
 
 set(CMAKE_BUILD_TYPE Debug)
