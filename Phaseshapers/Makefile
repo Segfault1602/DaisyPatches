@@ -6,10 +6,10 @@ CPP_SOURCES = main.cpp
 
 # DEBUG = 1
 
-LIBS += -lmarguerite
-LIBDIR += -L ../dsp/build
+LIBS += -ldsp
+LIBDIR += -L ../externals/libdsp/build/src
 
-C_INCLUDES += -I../dsp
+C_INCLUDES += -I../externals/libdsp/include
 
 # Library Locations
 LIBDAISY_DIR = ../externals/libDaisy/
