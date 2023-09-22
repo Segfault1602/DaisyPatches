@@ -7,7 +7,7 @@ CPP_SOURCES = main.cpp
 # DEBUG = 1
 
 LIBS += -ldsp
-LIBDIR += -L ../externals/libdsp/build/src
+LIBDIR += -L ../externals/libdsp/daisy/src
 
 C_INCLUDES += -I../externals/libdsp/include
 
