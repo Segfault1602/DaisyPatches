@@ -2,6 +2,7 @@
 #include "daisysp.h"
 #include "util/CpuLoadMeter.h"
 
+#include "dsp_base.h"
 #include "phaseshapers.h"
 
 using namespace daisy;
@@ -21,7 +22,7 @@ void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, s
     cpuLoadMeter.OnBlockStart();
 
     m_patch.ProcessAllControls();
-    float freq = mtof(m_freqCtrl.Process() + m_fineCtrl.Process());
+    float freq = dsp::FastMidiToFreq(m_freqCtrl.Process() + m_fineCtrl.Process());
     m_osc.SetFreq(freq);
 
     m_osc.SetWaveform(m_waveCtrl.Process());
@@ -43,8 +44,8 @@ void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, s
 int main(void)
 {
     m_patch.Init();
-    m_patch.SetAudioBlockSize(4); // number of samples handled per callback
-    m_patch.SetAudioSampleRate(SaiHandle::Config::SampleRate::SAI_48KHZ);
+    m_patch.SetAudioBlockSize(128); // number of samples handled per callback
+    m_patch.SetAudioSampleRate(SaiHandle::Config::SampleRate::SAI_96KHZ);
 
     cpuLoadMeter.Init(m_patch.AudioSampleRate(), m_patch.AudioBlockSize());
 

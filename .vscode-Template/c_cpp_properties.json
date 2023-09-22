@@ -11,9 +11,9 @@
             ],
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/../../externals/libDaisy/**",
-                "${workspaceFolder}/../../externals/DaisySP/**",
-                "${workspaceFolder}/../../externals/libdsp/**"
+                "${workspaceFolder}/../externals/libDaisy/**",
+                "${workspaceFolder}/../externals/DaisySP/**",
+                "${workspaceFolder}/../externals/libdsp/**"
             ],
             "name": "Win32",
             "windowsSdkVersion": "10.0.17763.0"
@@ -29,9 +29,9 @@
             ],
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/../../externals/libDaisy/**",
-                "${workspaceFolder}/../../externals/DaisySP/**",
-                "${workspaceFolder}/../../externals/libdsp/**"
+                "${workspaceFolder}/../externals/libDaisy/**",
+                "${workspaceFolder}/../externals/DaisySP/**",
+                "${workspaceFolder}/../externals/libdsp/**"
             ],
             "name": "macOS"
         }
