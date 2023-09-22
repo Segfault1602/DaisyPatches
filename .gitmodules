@@ -4,3 +4,9 @@
 [submodule "externals/libDaisy"]
 	path = externals/libDaisy
 	url = https://github.com/electro-smith/libDaisy.git
+[submodule "externals/googletest"]
+	path = externals/googletest
+	url = https://github.com/google/googletest.git
+[submodule "externals/libdsp"]
+	path = externals/libdsp
+	url = https://github.com/Segfault1602/libdsp.git
