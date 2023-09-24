@@ -10,7 +10,7 @@
                 "-d",
                 "${workspaceRoot}"
             ],
-            "executable": "${workspaceRoot}/build/BINARY_NAME.elf",
+            "executable": "${workspaceRoot}/build/PhaseShapers.elf",
             "interface": "swd",
             "name": "Cortex Debug",
             "openOCDLaunchCommands": [

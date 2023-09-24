@@ -45,7 +45,7 @@ int main(void)
 {
     m_patch.Init();
     m_patch.SetAudioBlockSize(128); // number of samples handled per callback
-    m_patch.SetAudioSampleRate(SaiHandle::Config::SampleRate::SAI_96KHZ);
+    m_patch.SetAudioSampleRate(SaiHandle::Config::SampleRate::SAI_48KHZ);
 
     cpuLoadMeter.Init(m_patch.AudioSampleRate(), m_patch.AudioBlockSize());
 
