@@ -23,6 +23,7 @@ enum class CalibrationState
 float g1V[kNumCvInputs];
 float g3V[kNumCvInputs];
 
+// Do 50 readings and average them
 constexpr size_t kNumCalibrationReadings = 50;
 float gADCReadings[kNumCvInputs][kNumCalibrationReadings];
 size_t gCurrentReadingNum = 0;
@@ -146,7 +147,7 @@ void ProcessControls()
 int main(void)
 {
     gPatch.Init();
-    gPatch.SetAudioBlockSize(64); // number of samples handled per callback
+    gPatch.SetAudioBlockSize(64);
     gPatch.SetAudioSampleRate(SaiHandle::Config::SampleRate::SAI_48KHZ);
     gPatch.seed.StartLog(false);
 
