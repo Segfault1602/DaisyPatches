@@ -24,18 +24,21 @@ float gPhase = 0.f;
 float gPhaseInc = 0.f;
 
 void UpdateOled();
+float ScaleWaveform(float in);
 
 void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, size_t size)
 {
     cpuLoadMeter.OnBlockStart();
 
     gPatch.ProcessAllControls();
-    float coarse = gVoctCalibration.ProcessInput(gPatch.controls[gPatch.CTRL_1].Process());
+
+    float coarse = gPatch.controls[gPatch.CTRL_1].Process();
     coarse += 36;
     float freq = dsp::FastMidiToFreq(coarse + m_fineCtrl.Process());
     m_osc.SetFreq(freq);
 
-    m_osc.SetWaveform(m_waveCtrl.Process());
+    float waveform = ScaleWaveform(m_waveCtrl.Process());
+    m_osc.SetWaveform(waveform);
 
     float mod = m_modCtrl.Process();
     m_osc.SetMod(mod);
@@ -49,6 +52,30 @@ void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, s
     }
 
     cpuLoadMeter.OnBlockEnd();
+}
+
+float ScaleWaveform(float in)
+{
+    // Add a +/- 0.l0 deadzone around each waveform to make it easier to select a waveform without crossfading
+    // between them.
+    uint8_t wave_int = static_cast<uint8_t>(in);
+    float wave_frac = in - wave_int;
+
+    if (wave_frac < 0.1f)
+    {
+        wave_frac = 0.0f;
+    }
+    else if (wave_frac > 0.9f)
+    {
+        wave_frac = 1.0f;
+    }
+    else
+    {
+        // Rescale the fractional part to be between 0.0 and 1.0
+        wave_frac = wave_frac / 0.8f;
+    }
+
+    return static_cast<float>(wave_int) + wave_frac;
 }
 
 int main(void)
@@ -69,6 +96,9 @@ int main(void)
     const CalibrationData& calibrationData = gCalibrationDataPersistentStorage.GetSettings();
     // Only CV1 is needs to be calibrated for this project.
     gVoctCalibration.SetData(calibrationData.scale[0], calibrationData.offset[0]);
+
+    gPatch.controls[gPatch.CTRL_1].SetOffset(calibrationData.offset[0]);
+    gPatch.controls[gPatch.CTRL_1].SetScale(calibrationData.scale[0]);
 
     cpuLoadMeter.Init(gPatch.AudioSampleRate(), gPatch.AudioBlockSize());
 
