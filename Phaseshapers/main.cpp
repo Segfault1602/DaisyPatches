@@ -115,7 +115,7 @@ int main(void)
     gPatch.StartAudio(AudioCallback);
     while (1)
     {
-        gPatch.DelayMs(1);
+        gPatch.DelayMs(50);
         UpdateOled();
     }
 }
@@ -128,8 +128,19 @@ void UpdateOled()
     gPatch.display.SetCursor(col, 0);
     uint16_t avgCpuLoad = cpuLoadMeter.GetAvgCpuLoad() * 100;
     memset(m_cpuLoadStr, 0, sizeof(m_cpuLoadStr));
-    sprintf(m_cpuLoadStr, "%d%%", avgCpuLoad);
+    sprintf(m_cpuLoadStr, "Avg: %d%%", avgCpuLoad);
+    gPatch.display.WriteString(m_cpuLoadStr, Font_7x10, true);
 
+    gPatch.display.SetCursor(col, 10);
+    uint16_t maxCpuLoad = cpuLoadMeter.GetMaxCpuLoad() * 100;
+    memset(m_cpuLoadStr, 0, sizeof(m_cpuLoadStr));
+    sprintf(m_cpuLoadStr, "Max: %d%%", maxCpuLoad);
+    gPatch.display.WriteString(m_cpuLoadStr, Font_7x10, true);
+
+    gPatch.display.SetCursor(col, 20);
+    uint16_t minCpuLoad = cpuLoadMeter.GetMinCpuLoad() * 100;
+    memset(m_cpuLoadStr, 0, sizeof(m_cpuLoadStr));
+    sprintf(m_cpuLoadStr, "Max: %d%%", minCpuLoad);
     gPatch.display.WriteString(m_cpuLoadStr, Font_7x10, true);
 
     gPatch.display.Update();
