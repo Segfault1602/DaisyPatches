@@ -32,7 +32,7 @@ void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, s
 
     gPatch.ProcessAllControls();
 
-    float coarse = gPatch.controls[gPatch.CTRL_1].Process();
+    float coarse = gVoctCalibration.ProcessInput(gPatch.controls[gPatch.CTRL_1].Process());
     coarse += 36;
     float freq = dsp::FastMidiToFreq(coarse + m_fineCtrl.Process());
     m_osc.SetFreq(freq);
@@ -97,9 +97,6 @@ int main(void)
     // Only CV1 is needs to be calibrated for this project.
     gVoctCalibration.SetData(calibrationData.scale[0], calibrationData.offset[0]);
 
-    gPatch.controls[gPatch.CTRL_1].SetOffset(calibrationData.offset[0]);
-    gPatch.controls[gPatch.CTRL_1].SetScale(calibrationData.scale[0]);
-
     cpuLoadMeter.Init(gPatch.AudioSampleRate(), gPatch.AudioBlockSize());
 
     m_osc.Init(gPatch.AudioSampleRate());
@@ -109,7 +106,7 @@ int main(void)
     m_fineCtrl.Init(gPatch.controls[gPatch.CTRL_2], 0.f, 7.f, Parameter::LINEAR);
     m_waveCtrl.Init(gPatch.controls[gPatch.CTRL_3], 0.0,
                     static_cast<uint8_t>(dsp::Phaseshaper::Waveform::NUM_WAVES) - 1, Parameter::LINEAR);
-    m_modCtrl.Init(gPatch.controls[gPatch.CTRL_4], -1.f, 1.f, Parameter::LINEAR);
+    m_modCtrl.Init(gPatch.controls[gPatch.CTRL_4], 0.f, 1.f, Parameter::LINEAR);
 
     gPatch.StartAdc();
     gPatch.StartAudio(AudioCallback);
