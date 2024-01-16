@@ -1,0 +1,47 @@
+{
+    "configurations": [
+        {
+            "configFiles": [
+                "interface/stlink.cfg",
+                "target/stm32h7x.cfg"
+            ],
+            "cwd": "${workspaceFolder}",
+            "debuggerArgs": [
+                "-d",
+                "${workspaceRoot}"
+            ],
+            "executable": "${workspaceRoot}/build/UITest.elf",
+            "interface": "swd",
+            "name": "Cortex Debug",
+            "openOCDLaunchCommands": [
+                "init",
+                "reset init"
+            ],
+            "preLaunchTask": "build_all_debug",
+            "preRestartCommands": [
+                "load",
+                "enable breakpoint",
+                "monitor reset"
+            ],
+            "request": "launch",
+            "servertype": "openocd",
+            "showDevDebugOutput": "both",
+            "svdFile": "${workspaceRoot}/.vscode/STM32H750x.svd",
+            "type": "cortex-debug",
+            // "postLaunchCommands": [
+            //     "monitor arm semihosting enable"
+            // ]
+            "rttConfig": {
+                "enabled": true,
+                "address": "auto",
+                "decoders": [
+                    {
+                        "port": 0, // In RTT lingo, this is the buffer index (or channel)
+                        "type": "console",
+                    }
+                ]
+            },
+        }
+    ],
+    "version": "0.2.0"
+}

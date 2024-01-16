@@ -10,3 +10,6 @@
 [submodule "externals/libdsp"]
 	path = externals/libdsp
 	url = https://github.com/Segfault1602/libdsp.git
+[submodule "externals/RTT"]
+	path = externals/RTT
+	url = https://github.com/SEGGERMicro/RTT.git

@@ -1,0 +1,30 @@
+# Project Name
+TARGET = DaisyLPG
+
+COMMON_INCLUDES =  -I../Common
+# SEGGER_DIR = ../Common/SEGGER_RTT_V794d
+# SEGGER_SRC_DIR = $(SEGGER_DIR)/RTT
+# SEGGER_INC_DIR = $(SEGGER_DIR)/RTT
+# SEGGER_SRC = $(SEGGER_SRC_DIR)/SEGGER_RTT.c $(SEGGER_SRC_DIR)/SEGGER_RTT_printf.c
+
+C_INCLUDES += $(COMMON_INCLUDES)
+
+# Sources
+CPP_SOURCES = main.cpp
+# C_SOURCES = $(SEGGER_SRC)
+
+# DEBUG = 1
+# OPT = -Og
+
+LIBS += -ldsp
+LIBDIR += -L ../externals/libdsp/daisy/src
+
+C_INCLUDES += -I../externals/libdsp/include
+
+# Library Locations
+LIBDAISY_DIR = ../externals/libDaisy/
+DAISYSP_DIR = ../externals/DaisySP/
+
+# Core location, and generic Makefile.
+SYSTEM_FILES_DIR = $(LIBDAISY_DIR)/core
+include $(SYSTEM_FILES_DIR)/Makefile

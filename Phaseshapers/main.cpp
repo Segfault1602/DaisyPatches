@@ -1,29 +1,39 @@
 #include "../Common/VOctCalibrationSettings.h"
 #include "daisy_patch.h"
 #include "daisysp.h"
+#include "filter.h"
 #include "util/CpuLoadMeter.h"
 #include "util/PersistentStorage.h"
 
-#include "dsp_base.h"
+#include "dsp_utils.h"
 #include "phaseshapers.h"
 
 using namespace daisy;
 using namespace daisysp;
 
+constexpr uint8_t kMidiNoteOffset = 32;
+
 DaisyPatch gPatch;
 CpuLoadMeter cpuLoadMeter;
-char m_cpuLoadStr[16] = {0};
+char gCpuLoadStr[16] = {0};
+
+char gCurrentFrequencyStr[16] = {0};
 
 VoctCalibration gVoctCalibration;
 PersistentStorage<CalibrationData> gCalibrationDataPersistentStorage(gPatch.seed.qspi);
 
-dsp::Phaseshaper m_osc;
+sfdsp::Phaseshaper m_osc[2];
+sfdsp::Biquad m_outputFilter;
+
 Parameter m_freqCtrl, m_fineCtrl, m_waveCtrl, m_modCtrl;
 
 float gPhase = 0.f;
 float gPhaseInc = 0.f;
+float gBaseFreq = 120.f;
+float gCurrentFrequency = 0.f;
 
 void UpdateOled();
+void UpdateControls();
 float ScaleWaveform(float in);
 
 void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, size_t size)
@@ -32,21 +42,30 @@ void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, s
 
     gPatch.ProcessAllControls();
 
+    UpdateControls();
+
     float coarse = gVoctCalibration.ProcessInput(gPatch.controls[gPatch.CTRL_1].Process());
-    coarse += 36;
-    float freq = dsp::FastMidiToFreq(coarse + m_fineCtrl.Process());
-    m_osc.SetFreq(freq);
+    coarse += kMidiNoteOffset;
+    float freq = sfdsp::FastMidiToFreq(coarse + m_fineCtrl.Process());
+    gCurrentFrequency = freq;
 
     float waveform = ScaleWaveform(m_waveCtrl.Process());
-    m_osc.SetWaveform(waveform);
-
     float mod = m_modCtrl.Process();
-    m_osc.SetMod(mod);
+    for (size_t i = 0; i < 2; i++)
+    {
+        m_osc[i].SetFreq(freq);
+        m_osc[i].SetWaveform(waveform);
+        m_osc[i].SetMod(mod);
+    }
 
+    m_osc[0].ProcessBlock(out[0], size);
+    m_osc[1].ProcessBlock(out[1], size);
+
+    m_outputFilter.ProcessBlock(out[1], out[1], size);
+
+    // Pass through the other channels
     for (size_t i = 0; i < size; i++)
     {
-        out[0][i] = m_osc.Process();
-        out[1][i] = in[1][i];
         out[2][i] = in[2][i];
         out[3][i] = in[3][i];
     }
@@ -99,13 +118,18 @@ int main(void)
 
     cpuLoadMeter.Init(gPatch.AudioSampleRate(), gPatch.AudioBlockSize());
 
-    m_osc.Init(gPatch.AudioSampleRate());
-    m_osc.SetWaveform(0.f);
+    m_outputFilter.SetCoefficients(0.29289322, 0.58578644, 0.29289322, 0, 0.171572875);
+
+    for (size_t i = 0; i < 2; i++)
+    {
+        m_osc[i].Init(gPatch.AudioSampleRate());
+        m_osc[i].SetWaveform(0.f);
+    }
 
     m_freqCtrl.Init(gPatch.controls[gPatch.CTRL_1], 10.0, 110.0f, Parameter::LINEAR);
     m_fineCtrl.Init(gPatch.controls[gPatch.CTRL_2], 0.f, 7.f, Parameter::LINEAR);
     m_waveCtrl.Init(gPatch.controls[gPatch.CTRL_3], 0.0,
-                    static_cast<uint8_t>(dsp::Phaseshaper::Waveform::NUM_WAVES) - 1, Parameter::LINEAR);
+                    static_cast<uint8_t>(sfdsp::Phaseshaper::Waveform::NUM_WAVES) - 1, Parameter::LINEAR);
     m_modCtrl.Init(gPatch.controls[gPatch.CTRL_4], 0.f, 1.f, Parameter::LINEAR);
 
     gPatch.StartAdc();
@@ -117,28 +141,60 @@ int main(void)
     }
 }
 
-void UpdateOled()
+void UpdateControls()
 {
-    gPatch.display.Fill(false);
+    int32_t encoder_val = gPatch.encoder.Increment();
 
-    uint8_t col = gPatch.display.Width() - 7 * 3;
+    gBaseFreq += encoder_val;
+    if (gBaseFreq < 10.f)
+    {
+        gBaseFreq = 10.f;
+    }
+    else if (gBaseFreq > 1000.f)
+    {
+        gBaseFreq = 1000.f;
+    }
+}
+
+void DisplayCpuUsage()
+{
+    uint8_t col = gPatch.display.Width() - 7 * 8;
     gPatch.display.SetCursor(col, 0);
     uint16_t avgCpuLoad = cpuLoadMeter.GetAvgCpuLoad() * 100;
-    memset(m_cpuLoadStr, 0, sizeof(m_cpuLoadStr));
-    sprintf(m_cpuLoadStr, "Avg: %d%%", avgCpuLoad);
-    gPatch.display.WriteString(m_cpuLoadStr, Font_7x10, true);
+    memset(gCpuLoadStr, 0, sizeof(gCpuLoadStr));
+    sprintf(gCpuLoadStr, "Avg: %d%%", avgCpuLoad);
+    gPatch.display.WriteString(gCpuLoadStr, Font_7x10, true);
 
     gPatch.display.SetCursor(col, 10);
     uint16_t maxCpuLoad = cpuLoadMeter.GetMaxCpuLoad() * 100;
-    memset(m_cpuLoadStr, 0, sizeof(m_cpuLoadStr));
-    sprintf(m_cpuLoadStr, "Max: %d%%", maxCpuLoad);
-    gPatch.display.WriteString(m_cpuLoadStr, Font_7x10, true);
+    memset(gCpuLoadStr, 0, sizeof(gCpuLoadStr));
+    sprintf(gCpuLoadStr, "Max: %d%%", maxCpuLoad);
+    gPatch.display.WriteString(gCpuLoadStr, Font_7x10, true);
 
     gPatch.display.SetCursor(col, 20);
     uint16_t minCpuLoad = cpuLoadMeter.GetMinCpuLoad() * 100;
-    memset(m_cpuLoadStr, 0, sizeof(m_cpuLoadStr));
-    sprintf(m_cpuLoadStr, "Max: %d%%", minCpuLoad);
-    gPatch.display.WriteString(m_cpuLoadStr, Font_7x10, true);
+    memset(gCpuLoadStr, 0, sizeof(gCpuLoadStr));
+    sprintf(gCpuLoadStr, "Max: %d%%", minCpuLoad);
+    gPatch.display.WriteString(gCpuLoadStr, Font_7x10, true);
+}
+
+void DisplayCurrentFrequency()
+{
+    uint8_t col = 0;
+    gPatch.display.SetCursor(col, 0);
+
+    float currentPitch = gCurrentFrequency;
+
+    memset(gCurrentFrequencyStr, 0, sizeof(gCurrentFrequencyStr));
+    sprintf(gCurrentFrequencyStr, "%d Hz", static_cast<int>(currentPitch));
+    gPatch.display.WriteString(gCpuLoadStr, Font_7x10, true);
+}
+
+void UpdateOled()
+{
+    gPatch.display.Fill(false);
+    DisplayCpuUsage();
+    DisplayCurrentFrequency();
 
     gPatch.display.Update();
 }
