@@ -1,4 +1,4 @@
-# Phaseshapers
+# Daisy LPG
 
 ## Author
 
@@ -6,17 +6,12 @@ Alex St-Onge
 
 ## Description
 
-Phaseshaper is a suite of oscillator based on [Phaseshaping Oscillator Algorithms For Musical Sound Synthesis](https://mural.maynoothuniversity.ie/4100/1/SMC2010.pdf)
-by J.Kleimola, V.Lazzarini, J.Timoney and V.Valimaki.
-
-The code was adapted to C++ from the python implementation provided with the paper.
-
-The PhaseShapers app can be flash to a Daisy Patch device to hear the various oscillator in  action.
+Quad low pass gate module based on a digital model of the Buchla Lowpass Gate. The LPG code was ported from MATLAB. Original MATLAB code by Josh Rohs (http://www.music.mcgill.ca/~gary/courses/projects/618_2018/rohs/MUMT618_Buchla_LPG_Report.pdf). Orignal paper by Parker and D'Angelo (https://www.dafx.de/paper-archive/2013/papers/44.dafx2013_submission_56.pdf)
 
 ## Controls
 
 | Control | Description |
 | --- | --- |
-| Ctrl 1 and Ctrl 2 | Corse and fine tuning |
-| Ctrl 3 | Waveform selector |
-| Audio Out1 | output |
+| Ctrl 1 to 4 | Corse and fine tuning |
+| Audio In 1 to 4| Audio input
+| Audio Out 1 to 4 | Audio Output |
